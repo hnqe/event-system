@@ -103,7 +103,7 @@ public class InscricaoService {
             List<String> camposFaltantes = camposObrigatorios.stream()
                     .filter(c -> !camposObrigatoriosPreenchidos.contains(c.getId()))
                     .map(CampoAdicional::getNome)
-                    .collect(Collectors.toList());
+                    .toList();
 
             throw new InscricaoException("Os seguintes campos obrigatórios não foram preenchidos: " +
                     String.join(", ", camposFaltantes));

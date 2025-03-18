@@ -68,7 +68,7 @@ public class DepartamentoController {
 
             List<Departamento> departamentosCampus = campusIds.stream()
                     .flatMap(id -> departamentoService.listarPorCampus(id).stream())
-                    .collect(Collectors.toList());
+                    .toList();
 
             return ResponseEntity.ok(departamentosCampus);
         }

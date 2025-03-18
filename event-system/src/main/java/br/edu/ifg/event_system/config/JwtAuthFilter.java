@@ -59,15 +59,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 .map(Role::getName)
                 .map(rn -> "ROLE_" + rn)
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .toList();
 
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(username, null, roles);
 
-        // set no SecurityContext
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        // segue
         filterChain.doFilter(request, response);
     }
 

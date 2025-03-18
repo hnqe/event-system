@@ -33,7 +33,7 @@ public class InscricaoResponseDTO {
         if (inscricao.getCamposValores() != null) {
             this.camposValores = inscricao.getCamposValores().stream()
                     .map(CampoValorResponseDTO::new)
-                    .collect(Collectors.toList());
+                    .toList();
         }
     }
 

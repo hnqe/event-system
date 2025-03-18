@@ -50,7 +50,7 @@ public class InscricaoController {
         List<Inscricao> minhasInscricoes = inscricaoService.listarInscricoesDoUsuario(userLogado.getId());
         List<InscricaoResponseDTO> response = minhasInscricoes.stream()
                 .map(InscricaoResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(response);
     }
