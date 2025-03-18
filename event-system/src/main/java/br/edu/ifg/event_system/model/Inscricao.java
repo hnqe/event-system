@@ -48,6 +48,9 @@ public class Inscricao {
     public Long getId() {
         return id;
     }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public User getUser() {
         return user;
@@ -80,7 +83,6 @@ public class Inscricao {
     public List<CampoValor> getCamposValores() {
         return camposValores;
     }
-
     public void setCamposValores(List<CampoValor> camposValores) {
         this.camposValores = camposValores;
     }
@@ -89,7 +91,6 @@ public class Inscricao {
         camposValores.add(campoValor);
         campoValor.setInscricao(this);
     }
-
     public void removeCampoValor(CampoValor campoValor) {
         camposValores.remove(campoValor);
         campoValor.setInscricao(null);
