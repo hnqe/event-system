@@ -130,10 +130,10 @@ class UserControllerTest {
         userRequestDTO.setRoles(List.of("USER"));
 
         when(userService.criarUsuario(
-                eq("novo@ifg.edu.br"),
-                eq("senha123"),
-                eq("Novo Usuário"),
-                eq(List.of("USER"))
+                "novo@ifg.edu.br",
+                "senha123",
+                "Novo Usuário",
+                List.of("USER")
         )).thenReturn(user);
 
         ResponseEntity<User> response = userController.criar(userRequestDTO);
@@ -142,10 +142,10 @@ class UserControllerTest {
         assertNotNull(response.getBody());
         assertEquals("user@ifg.edu.br", response.getBody().getUsername());
         verify(userService).criarUsuario(
-                eq("novo@ifg.edu.br"),
-                eq("senha123"),
-                eq("Novo Usuário"),
-                eq(List.of("USER"))
+                "novo@ifg.edu.br",
+                "senha123",
+                "Novo Usuário",
+                List.of("USER")
         );
     }
 
