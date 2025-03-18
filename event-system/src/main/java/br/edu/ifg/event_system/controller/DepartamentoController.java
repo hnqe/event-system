@@ -104,8 +104,9 @@ public class DepartamentoController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS')")
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody DepartamentoRequestDTO request) {
-        ResponseEntity<?> validacao = DepartamentoUtils.validarCampusEPermissao(
+    public ResponseEntity<Object> criar(@RequestBody DepartamentoRequestDTO request) {
+        @SuppressWarnings("unchecked")
+        ResponseEntity<Object> validacao = (ResponseEntity<Object>) DepartamentoUtils.validarCampusEPermissao(
                 request, campusService, userService);
         if (!(validacao.getBody() instanceof DepartamentoUtils.DepartamentoValidationData dataOk)) {
             return validacao;
@@ -121,13 +122,14 @@ public class DepartamentoController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS','ADMIN_DEPARTAMENTO')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody DepartamentoRequestDTO request) {
+    public ResponseEntity<Object> atualizar(@PathVariable Long id, @RequestBody DepartamentoRequestDTO request) {
         Departamento existente = departamentoService.buscarPorId(id);
         if (existente == null) {
             return ResponseEntity.notFound().build();
         }
 
-        ResponseEntity<?> validacao = DepartamentoUtils.validarCampusEPermissao(
+        @SuppressWarnings("unchecked")
+        ResponseEntity<Object> validacao = (ResponseEntity<Object>) DepartamentoUtils.validarCampusEPermissao(
                 request, campusService, userService);
         if (!(validacao.getBody() instanceof DepartamentoUtils.DepartamentoValidationData dataOk)) {
             return validacao;
@@ -148,7 +150,7 @@ public class DepartamentoController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id) {
+    public ResponseEntity<String> deletar(@PathVariable Long id) {
         Departamento existente = departamentoService.buscarPorId(id);
         if (existente == null) {
             return ResponseEntity.notFound().build();
@@ -172,4 +174,5 @@ public class DepartamentoController {
         departamentoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
+
 }
