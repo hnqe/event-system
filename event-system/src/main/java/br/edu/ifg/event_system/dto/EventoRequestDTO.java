@@ -17,17 +17,10 @@ public class EventoRequestDTO {
     private Boolean estudanteIfg;
     private List<CampoAdicionalDTO> camposAdicionais = new ArrayList<>();
 
-    /**
-     * Default no-args constructor.
-     *
-     * This constructor is intentionally empty because:
-     * 1. It's required by JSON/XML serialization frameworks (e.g., Jackson, JAXB)
-     * 2. Most fields are initialized with their default values (null)
-     * 3. The camposAdicionais field is explicitly initialized with a new ArrayList<>()
-     * 4. The object will be populated through setter methods or directly by
-     *    deserialization frameworks during HTTP request processing
-     */
     public EventoRequestDTO() {
+        // This constructor is intentionally empty because it's required by
+        // JSON/XML serialization frameworks. The camposAdicionais field is
+        // already initialized with a new ArrayList<>() at declaration.
     }
 
     public String getTitulo() {

@@ -31,20 +31,10 @@ public class CampoAdicional {
     @Version
     private Integer version;
 
-    /**
-     * Default no-args constructor.
-     *
-     * This constructor is intentionally empty because:
-     * 1. JPA specification requires all entity classes to have a public or protected
-     *    no-args constructor (JPA 2.0 specification, section 2.1)
-     * 2. The JPA provider (Hibernate) uses this constructor when instantiating entities
-     *    from database records
-     * 3. After construction, field values are set directly by the persistence framework
-     *    using reflection, bypassing setters
-     * 4. This empty constructor is essential for ORM functionality, allowing entities
-     *    to be properly hydrated from the database
-     */
     public CampoAdicional() {
+        // This constructor is intentionally empty because JPA specification
+        // requires all entity classes to have a no-args constructor. The
+        // persistence provider instantiates entities using this constructor.
     }
 
     public Long getId() {
