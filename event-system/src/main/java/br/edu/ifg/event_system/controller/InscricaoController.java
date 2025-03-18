@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/inscricoes")
 public class InscricaoController {
 
+    private static final String ERRO_USUARIO_NAO_LOGADO = "Usuário não logado.";
+
     private final InscricaoService inscricaoService;
     private final UserService userService;
     private final EventoService eventoService;
@@ -37,12 +39,12 @@ public class InscricaoController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/minhas")
-    public ResponseEntity<?> listarMinhasInscricoes() {
+    public ResponseEntity<Object> listarMinhasInscricoes() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User userLogado = userService.buscarPorUsername(auth.getName());
         if (userLogado == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Usuário não logado.");
+                    .body(ERRO_USUARIO_NAO_LOGADO);
         }
 
         List<Inscricao> minhasInscricoes = inscricaoService.listarInscricoesDoUsuario(userLogado.getId());
@@ -55,12 +57,12 @@ public class InscricaoController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/inscrever")
-    public ResponseEntity<?> inscreverNoEvento(@RequestParam("eventoId") Long eventoId) {
+    public ResponseEntity<Object> inscreverNoEvento(@RequestParam("eventoId") Long eventoId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User userLogado = userService.buscarPorUsername(auth.getName());
         if (userLogado == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Usuário não logado.");
+                    .body(ERRO_USUARIO_NAO_LOGADO);
         }
 
         Evento evento = eventoService.buscarPorId(eventoId);
@@ -82,12 +84,12 @@ public class InscricaoController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/inscrever-completo")
-    public ResponseEntity<?> inscreverCompletoNoEvento(@RequestBody InscricaoRequestDTO request) {
+    public ResponseEntity<Object> inscreverCompletoNoEvento(@RequestBody InscricaoRequestDTO request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User userLogado = userService.buscarPorUsername(auth.getName());
         if (userLogado == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Usuário não logado.");
+                    .body(ERRO_USUARIO_NAO_LOGADO);
         }
 
         Evento evento = eventoService.buscarPorId(request.getEventoId());
@@ -109,7 +111,7 @@ public class InscricaoController {
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{inscricaoId}")
-    public ResponseEntity<?> cancelarInscricao(@PathVariable Long inscricaoId) {
+    public ResponseEntity<String> cancelarInscricao(@PathVariable Long inscricaoId) {
         Inscricao insc = inscricaoService.buscarPorId(inscricaoId);
         if (insc == null) {
             return ResponseEntity.notFound().build();
@@ -140,7 +142,7 @@ public class InscricaoController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/evento/{eventoId}/campos")
-    public ResponseEntity<?> listarCamposDoEvento(@PathVariable Long eventoId) {
+    public ResponseEntity<Object> listarCamposDoEvento(@PathVariable Long eventoId) {
         Evento evento = eventoService.buscarPorId(eventoId);
         if (evento == null) {
             return ResponseEntity.notFound().build();
