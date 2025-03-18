@@ -9,15 +9,18 @@ import br.edu.ifg.event_system.service.CampusService;
 import br.edu.ifg.event_system.service.DepartamentoService;
 import br.edu.ifg.event_system.service.EventoService;
 import br.edu.ifg.event_system.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EventoUtils {
@@ -25,7 +28,7 @@ public class EventoUtils {
     private static final String ROLE_ADMIN_GERAL = "ADMIN_GERAL";
     private static final String ROLE_ADMIN_CAMPUS = "ADMIN_CAMPUS";
     private static final String ROLE_ADMIN_DEPARTAMENTO = "ADMIN_DEPARTAMENTO";
-    private static final Logger logger = Logger.getLogger(EventoUtils.class.getName());
+    private static final Logger logger = LogManager.getLogger(EventoUtils.class);
 
     private EventoUtils() {
         throw new UnsupportedOperationException("Esta é uma classe utilitária e não pode ser instanciada.");
@@ -328,9 +331,7 @@ public class EventoUtils {
             try {
                 campoValorRepository.deleteByCampoId(id);
             } catch (Exception e) {
-                if (logger.isLoggable(Level.SEVERE)) {
-                    logger.log(Level.SEVERE, "Erro ao remover valores do campo ID " + id, e);
-                }
+                logger.error(() -> "Erro ao remover valores do campo ID " + id, e);
             }
         }
     }
