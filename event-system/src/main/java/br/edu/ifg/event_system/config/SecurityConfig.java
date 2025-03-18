@@ -33,6 +33,11 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final String EVENTOS_API_PATH = "/api/eventos/**";
+    private static final String ROLE_ADMIN_GERAL = "ADMIN_GERAL";
+    private static final String ROLE_ADMIN_CAMPUS = "ADMIN_CAMPUS";
+    private static final String ROLE_ADMIN_DEPARTAMENTO = "ADMIN_DEPARTAMENTO";
+
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
@@ -89,23 +94,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers("/api/auth/**")
-                                .permitAll()
+                            .permitAll()
                             .requestMatchers("/")
-                                .permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/eventos/**")
-                                .permitAll()
+                            .permitAll()
+                            .requestMatchers(HttpMethod.GET, EVENTOS_API_PATH)
+                            .permitAll()
                             .requestMatchers("/api/inscricoes/**")
-                                .authenticated()
-                            .requestMatchers(HttpMethod.PUT, "/api/eventos/{id}/encerrar")
-                                .hasAnyRole("ADMIN_GERAL", "ADMIN_CAMPUS", "ADMIN_DEPARTAMENTO")
-                            .requestMatchers(HttpMethod.POST, "/api/eventos/**")
-                                .hasAnyRole("ADMIN_GERAL", "ADMIN_CAMPUS", "ADMIN_DEPARTAMENTO")
-                            .requestMatchers(HttpMethod.PUT, "/api/eventos/**")
-                                .hasAnyRole("ADMIN_GERAL", "ADMIN_CAMPUS", "ADMIN_DEPARTAMENTO")
-                            .requestMatchers(HttpMethod.DELETE, "/api/eventos/**")
-                                .hasAnyRole("ADMIN_GERAL", "ADMIN_CAMPUS", "ADMIN_DEPARTAMENTO")
+                            .authenticated()
+                            .requestMatchers(HttpMethod.PUT, EVENTOS_API_PATH + "/{id}/encerrar")
+                            .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
+                            .requestMatchers(HttpMethod.POST, EVENTOS_API_PATH)
+                            .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
+                            .requestMatchers(HttpMethod.PUT, EVENTOS_API_PATH)
+                            .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
+                            .requestMatchers(HttpMethod.DELETE, EVENTOS_API_PATH)
+                            .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
                             .requestMatchers("/admin/**")
-                                .hasAnyRole("ADMIN_GERAL", "ADMIN_CAMPUS", "ADMIN_DEPARTAMENTO")
+                            .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
                             .anyRequest()
                                 .authenticated();
                 })
@@ -134,4 +139,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }
