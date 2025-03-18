@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class EventoUtils {
@@ -23,6 +25,7 @@ public class EventoUtils {
     private static final String ROLE_ADMIN_GERAL = "ADMIN_GERAL";
     private static final String ROLE_ADMIN_CAMPUS = "ADMIN_CAMPUS";
     private static final String ROLE_ADMIN_DEPARTAMENTO = "ADMIN_DEPARTAMENTO";
+    private static final Logger logger = Logger.getLogger(EventoUtils.class.getName());
 
     private EventoUtils() {
         throw new UnsupportedOperationException("Esta é uma classe utilitária e não pode ser instanciada.");
@@ -325,7 +328,7 @@ public class EventoUtils {
             try {
                 campoValorRepository.deleteByCampoId(id);
             } catch (Exception e) {
-                System.err.println("Erro ao remover valores do campo ID " + id + ": " + e.getMessage());
+                logger.log(Level.SEVERE, "Erro ao remover valores do campo ID " + id, e);
             }
         }
     }
