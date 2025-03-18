@@ -18,6 +18,9 @@ import java.util.List;
 @Transactional
 public class UserService {
 
+    private static final String ROLE_ADMIN_DEPARTAMENTO = "ADMIN_DEPARTAMENTO";
+    private static final String ROLE_ADMIN_CAMPUS = "ADMIN_CAMPUS";
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -79,16 +82,8 @@ public class UserService {
     }
 
     public void adicionarCampusAoUsuario(User user, Campus campus) {
-        boolean jaTemRoleCampus = user.getRoles().stream()
-                .anyMatch(r -> r.getName().equals("ADMIN_CAMPUS"));
-        if (!jaTemRoleCampus) {
-            Role roleCampus = roleRepository.findByName("ADMIN_CAMPUS");
-            if (roleCampus == null) {
-                roleCampus = new Role("ADMIN_CAMPUS");
-                roleRepository.save(roleCampus);
-            }
-            user.getRoles().add(roleCampus);
-        }
+        adicionarRoleSeNecessario(user, ROLE_ADMIN_CAMPUS);
+
         if (!user.getCampusQueAdministro().contains(campus)) {
             user.getCampusQueAdministro().add(campus);
         }
@@ -99,22 +94,14 @@ public class UserService {
     public void removerCampusDoUsuario(User user, Campus campus) {
         user.getCampusQueAdministro().remove(campus);
         if (user.getCampusQueAdministro().isEmpty()) {
-            user.getRoles().removeIf(r -> r.getName().equals("ADMIN_CAMPUS"));
+            user.getRoles().removeIf(r -> r.getName().equals(ROLE_ADMIN_CAMPUS));
         }
         userRepository.save(user);
     }
 
     public void adicionarDepartamentoAoUsuario(User user, Departamento departamento) {
-        boolean jaTemRoleDepartamento = user.getRoles().stream()
-                .anyMatch(r -> r.getName().equals("ADMIN_DEPARTAMENTO"));
-        if (!jaTemRoleDepartamento) {
-            Role roleDepto = roleRepository.findByName("ADMIN_DEPARTAMENTO");
-            if (roleDepto == null) {
-                roleDepto = new Role("ADMIN_DEPARTAMENTO");
-                roleRepository.save(roleDepto);
-            }
-            user.getRoles().add(roleDepto);
-        }
+        adicionarRoleSeNecessario(user, ROLE_ADMIN_DEPARTAMENTO);
+
         if (!user.getDepartamentosQueAdministro().contains(departamento)) {
             user.getDepartamentosQueAdministro().add(departamento);
         }
@@ -125,7 +112,7 @@ public class UserService {
     public void removerDepartamentoDoUsuario(User user, Departamento departamento) {
         user.getDepartamentosQueAdministro().remove(departamento);
         if (user.getDepartamentosQueAdministro().isEmpty()) {
-            user.getRoles().removeIf(r -> r.getName().equals("ADMIN_DEPARTAMENTO"));
+            user.getRoles().removeIf(r -> r.getName().equals(ROLE_ADMIN_DEPARTAMENTO));
         }
         userRepository.save(user);
     }
@@ -148,6 +135,20 @@ public class UserService {
             user.getRoles().add(role);
         }
         userRepository.save(user);
+    }
+
+    private void adicionarRoleSeNecessario(User user, String roleName) {
+        boolean jaTemRole = user.getRoles().stream()
+                .anyMatch(r -> r.getName().equals(roleName));
+
+        if (!jaTemRole) {
+            Role role = roleRepository.findByName(roleName);
+            if (role == null) {
+                role = new Role(roleName);
+                roleRepository.save(role);
+            }
+            user.getRoles().add(role);
+        }
     }
 
 }
