@@ -30,9 +30,9 @@ public class DepartamentoUtils {
 
     }
 
-    public static ResponseEntity<?> validarCampusEPermissao(DepartamentoRequestDTO request,
-                                                            CampusService campusService,
-                                                            UserService userService) {
+    public static ResponseEntity<Object> validarCampusEPermissao(DepartamentoRequestDTO request,
+                                                                 CampusService campusService,
+                                                                 UserService userService) {
         Campus campus = campusService.buscarPorId(request.getCampusId());
         if (campus == null) {
             return ResponseEntity.badRequest().body("Campus inválido ou não encontrado.");
