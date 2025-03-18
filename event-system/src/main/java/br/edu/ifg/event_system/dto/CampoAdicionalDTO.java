@@ -8,6 +8,15 @@ public class CampoAdicionalDTO {
     private Boolean obrigatorio;
     private String opcoes;
 
+    /**
+     * Default no-args constructor.
+     *
+     * This constructor is intentionally empty because:
+     * 1. It's required for frameworks like Jackson/JSON-B to deserialize JSON into this DTO
+     * 2. All fields are initialized with their default values (null for objects, false for boolean)
+     * 3. The DTO is designed to be populated after construction using setter methods or by
+     *    the deserialization framework directly
+     */
     public CampoAdicionalDTO() {
     }
 
