@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -69,20 +72,11 @@ class JwtAuthFilterTest {
         SecurityContextHolder.setContext(securityContext);
     }
 
-    @Test
-    void doFilterInternal_WithNoAuthHeader_ShouldContinueFilterChainWithoutAuthentication() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn(null);
-
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
-
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(filterChain).doFilter(request, response);
-        verify(jwtService, never()).validateToken(anyString());
-    }
-
-    @Test
-    void doFilterInternal_WithNonBearerAuthHeader_ShouldContinueFilterChainWithoutAuthentication() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn("Basic dXNlcjpwYXNzd29yZA==");
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"Basic dXNlcjpwYXNzd29yZA=="})
+    void doFilterInternal_WithInvalidAuthHeader_ShouldContinueFilterChainWithoutAuthentication(String authHeader) throws ServletException, IOException {
+        when(request.getHeader("Authorization")).thenReturn(authHeader);
 
         jwtAuthFilter.doFilterInternal(request, response, filterChain);
 
@@ -144,17 +138,6 @@ class JwtAuthFilterTest {
         verify(jwtService).validateToken(validToken);
         verify(jwtService).getUsernameFromToken(validToken);
         verify(userRepository).findByUsername("test@ifg.edu.br");
-    }
-
-    @Test
-    void doFilterInternal_WithEmptyAuthHeader_ShouldContinueFilterChainWithoutAuthentication() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn("");
-
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
-
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(filterChain).doFilter(request, response);
-        verify(jwtService, never()).validateToken(anyString());
     }
 
     @Test

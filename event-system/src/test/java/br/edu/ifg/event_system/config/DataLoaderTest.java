@@ -35,10 +35,10 @@ class DataLoaderTest {
 
         verify(userService).buscarPorUsername("admin@ifg.br");
         verify(userService).criarUsuario(
-                eq("admin@ifg.br"),
-                eq("123456"),
-                eq("Administrador Geral"),
-                eq(List.of("ADMIN_GERAL"))
+                "admin@ifg.br",
+                "123456",
+                "Administrador Geral",
+                List.of("ADMIN_GERAL")
         );
     }
 
@@ -64,10 +64,10 @@ class DataLoaderTest {
 
         verify(userService).buscarPorUsername("admin@ifg.br");
         verify(userService).criarUsuario(
-                eq("admin@ifg.br"),
-                eq("123456"),
-                eq("Administrador Geral"),
-                eq(List.of("ADMIN_GERAL"))
+                "admin@ifg.br",
+                "123456",
+                "Administrador Geral",
+                List.of("ADMIN_GERAL")
         );
     }
 
