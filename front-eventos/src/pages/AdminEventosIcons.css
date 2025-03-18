@@ -1,0 +1,55 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+.icon-plus::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f067";
+  font-weight: 900;
+}
+
+.icon-search::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f002";
+  font-weight: 900;
+}
+
+.icon-users::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f500";
+  font-weight: 900;
+}
+
+.icon-edit::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f044";
+  font-weight: 900;
+}
+
+.icon-trash::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f1f8";
+  font-weight: 900;
+}
+
+.icon-alert::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f071";
+  font-weight: 900;
+}
+
+.icon-calendar-empty::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f133";
+  font-weight: 900;
+}
+
+.icon-check::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f00c";
+  font-weight: 900;
+}
+
+.icon-refresh::before {
+  font-family: "Font Awesome 6 Free";
+  content: "\f021";
+  font-weight: 900;
+}

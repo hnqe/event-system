@@ -1,0 +1,284 @@
+.evento-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.evento-modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.evento-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: var(--primary-dark, #024e2a);
+  z-index: 2;
+  color: white;
+}
+
+.evento-modal-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: white;
+}
+
+.evento-btn-close-modal {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.evento-btn-close-modal:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.evento-modal-body {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.evento-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.evento-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #f9f9f9;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border-left: 3px solid var(--primary-color, #02673b);
+}
+
+.evento-info-item i {
+  font-size: 1.2rem;
+  color: var(--primary-color, #02673b);
+  width: 20px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.evento-info-item div {
+  flex: 1;
+}
+
+.evento-info-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.evento-info-item p {
+  margin: 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.evento-descricao-completa {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.evento-descricao-completa h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: var(--primary-color, #02673b);
+  border-bottom: 2px solid var(--primary-light, #028043);
+  padding-bottom: 8px;
+  display: inline-block;
+}
+
+.evento-descricao-text {
+  color: #444;
+  line-height: 1.6;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.evento-descricao-text p {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.evento-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  z-index: 2;
+}
+
+.evento-modal-inscricao-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.evento-inscrito-badge {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #e8f5e9;
+  color: var(--success-color, #4caf50);
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.evento-inscrito-badge i {
+  margin-right: 5px;
+}
+
+.evento-btn-cancelar-inscricao {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5;
+  color: var(--error-color, #d32f2f);
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.evento-btn-cancelar-inscricao i {
+  margin-right: 5px;
+}
+
+.evento-btn-cancelar-inscricao:hover {
+  background-color: #ffebee;
+  border-color: var(--error-color, #d32f2f);
+}
+
+.evento-btn-inscrever {
+  background-color: var(--primary-color, #02673b);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.evento-btn-inscrever:hover {
+  background-color: var(--primary-dark, #024e2a);
+}
+
+.evento-btn-fechar {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.evento-btn-fechar:hover {
+  background-color: #e0e0e0;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .evento-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .evento-modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .evento-modal-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .evento-modal-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .evento-modal-inscricao-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .evento-btn-fechar,
+  .evento-btn-inscrever,
+  .evento-btn-cancelar-inscricao {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
