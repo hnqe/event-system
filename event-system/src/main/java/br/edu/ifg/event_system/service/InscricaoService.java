@@ -4,8 +4,8 @@ import br.edu.ifg.event_system.dto.CampoValorDTO;
 import br.edu.ifg.event_system.dto.InscricaoRequestDTO;
 import br.edu.ifg.event_system.exception.InscricaoException;
 import br.edu.ifg.event_system.model.*;
-import br.edu.ifg.event_system.repository.CampoAdicionalRepository;
 import br.edu.ifg.event_system.repository.InscricaoRepository;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,18 +16,32 @@ import java.util.stream.Collectors;
 @Service
 public class InscricaoService {
 
-    private final InscricaoRepository inscricaoRepository;
-    private final CampoAdicionalRepository campoAdicionalRepository;
+    private static final String STATUS_ATIVA = "ATIVA";
+    private static final String STATUS_CANCELADA = "CANCELADA";
 
-    public InscricaoService(InscricaoRepository inscricaoRepository,
-                            CampoAdicionalRepository campoAdicionalRepository) {
+    private final InscricaoRepository inscricaoRepository;
+    private final ApplicationContext applicationContext;
+
+    public InscricaoService(
+            InscricaoRepository inscricaoRepository,
+            ApplicationContext applicationContext) {
         this.inscricaoRepository = inscricaoRepository;
-        this.campoAdicionalRepository = campoAdicionalRepository;
+        this.applicationContext = applicationContext;
+    }
+
+    /**
+     * Gets the proxied instance of this service to ensure transactional behavior
+     * when calling methods within the same class.
+     *
+     * @return the proxied instance of InscricaoService
+     */
+    private InscricaoService getProxy() {
+        return applicationContext.getBean(InscricaoService.class);
     }
 
     @Transactional
     public Inscricao inscreverUsuarioEmEvento(User user, Evento evento) {
-        return inscreverUsuarioEmEvento(user, evento, null);
+        return getProxy().inscreverUsuarioEmEvento(user, evento, null);
     }
 
     @Transactional
@@ -39,7 +53,7 @@ public class InscricaoService {
         }
 
         Optional<Inscricao> existente = inscricaoRepository.findByUserIdAndEventoId(user.getId(), evento.getId());
-        if (existente.isPresent() && "ATIVA".equalsIgnoreCase(existente.get().getStatus())) {
+        if (existente.isPresent() && STATUS_ATIVA.equalsIgnoreCase(existente.get().getStatus())) {
             throw new InscricaoException("Você já está inscrito neste evento!");
         }
 
@@ -53,12 +67,12 @@ public class InscricaoService {
         Inscricao inscricao;
         if (existente.isPresent()) {
             inscricao = existente.get();
-            inscricao.setStatus("ATIVA");
+            inscricao.setStatus(STATUS_ATIVA);
             inscricao.setDataInscricao(LocalDateTime.now());
 
             inscricao.getCamposValores().clear();
         } else {
-            inscricao = new Inscricao(user, evento, LocalDateTime.now(), "ATIVA");
+            inscricao = new Inscricao(user, evento, LocalDateTime.now(), STATUS_ATIVA);
         }
 
         if (camposValores != null && !camposValores.isEmpty()) {
@@ -109,14 +123,14 @@ public class InscricaoService {
 
     @Transactional
     public Inscricao processarInscricao(User user, InscricaoRequestDTO request, Evento evento) {
-        return inscreverUsuarioEmEvento(user, evento, request.getCamposValores());
+        return getProxy().inscreverUsuarioEmEvento(user, evento, request.getCamposValores());
     }
 
     @Transactional
     public void cancelarInscricao(Long inscricaoId) {
         Inscricao insc = inscricaoRepository.findById(inscricaoId)
                 .orElseThrow(() -> new InscricaoException("Inscrição não encontrada!"));
-        insc.setStatus("CANCELADA");
+        insc.setStatus(STATUS_CANCELADA);
         inscricaoRepository.save(insc);
     }
 
