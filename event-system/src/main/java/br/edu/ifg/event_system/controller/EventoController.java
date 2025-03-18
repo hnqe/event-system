@@ -112,25 +112,31 @@ public class EventoController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS','ADMIN_DEPARTAMENTO')")
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody EventoRequestDTO request) {
-        ResponseEntity<?> validacao = EventoUtils.validarDadosIniciais(
+    public ResponseEntity<Object> criar(@RequestBody EventoRequestDTO request) {
+        ResponseEntity<?> validacaoResult = EventoUtils.validarDadosIniciais(
                 request, campusService, departamentoService, userService
         );
 
-        if (validacao.getStatusCode() != HttpStatus.OK) {
-            return validacao;
+        if (validacaoResult.getStatusCode() != HttpStatus.OK) {
+            return ResponseEntity.status(validacaoResult.getStatusCode())
+                    .body(validacaoResult.getBody());
         }
 
-        EventoUtils.EventoValidationData dataOk = (EventoUtils.EventoValidationData) validacao.getBody();
+        EventoUtils.EventoValidationData dataOk = (EventoUtils.EventoValidationData) validacaoResult.getBody();
         Evento novoEvento = new Evento();
         assert dataOk != null;
-        return EventoUtils.persistirEvento(novoEvento, request, dataOk, eventoService, campoAdicionalRepository);
+
+        ResponseEntity<?> persistResult = EventoUtils.persistirEvento(
+                novoEvento, request, dataOk, eventoService, campoAdicionalRepository);
+
+        return ResponseEntity.status(persistResult.getStatusCode())
+                .body(persistResult.getBody());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS','ADMIN_DEPARTAMENTO')")
     @PutMapping("/{id}/encerrar")
-    public ResponseEntity<?> encerrarEvento(@PathVariable Long id) {
-        ResponseEntity<?> check = checkEventoPermissao(id);
+    public ResponseEntity<Object> encerrarEvento(@PathVariable Long id) {
+        ResponseEntity<Object> check = checkEventoPermissao(id);
         if (!(check.getBody() instanceof EventoData data)) {
             return check;
         }
@@ -150,39 +156,37 @@ public class EventoController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS','ADMIN_DEPARTAMENTO')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody EventoRequestDTO request) {
-        Evento eventoExistente = eventoService.buscarPorId(id);
-        if (eventoExistente == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Object> atualizar(@PathVariable Long id, @RequestBody EventoRequestDTO request) {
+        ResponseEntity<Object> checkResult = checkEventoPermissao(id);
+        if (!(checkResult.getBody() instanceof EventoData data)) {
+            return checkResult;
         }
 
-        User usuarioLogado = getUsuarioLogado();
-        if (usuarioLogado == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não encontrado");
-        }
-
-        ResponseEntity<?> checkPermissao = EventoUtils.checarPermissaoEvento(
-                usuarioLogado, eventoExistente);
-        if (checkPermissao.getStatusCode() != HttpStatus.OK) {
-            return checkPermissao;
-        }
+        Evento eventoExistente = data.evento();
 
         ResponseEntity<?> validationResult = EventoUtils.validarDadosIniciais(
                 request, campusService, departamentoService, userService);
         if (validationResult.getStatusCode() != HttpStatus.OK) {
-            return validationResult;
+            return ResponseEntity.status(validationResult.getStatusCode())
+                    .body(validationResult.getBody());
         }
 
-        EventoUtils.EventoValidationData data = (EventoUtils.EventoValidationData) validationResult.getBody();
-        assert data != null;
-        return EventoUtils.persistirEvento(eventoExistente, request, data, eventoService,
+        EventoUtils.EventoValidationData validationData =
+                (EventoUtils.EventoValidationData) validationResult.getBody();
+        assert validationData != null;
+
+        ResponseEntity<?> persistResult = EventoUtils.persistirEvento(
+                eventoExistente, request, validationData, eventoService,
                 campoAdicionalRepository, campoValorRepository);
+
+        return ResponseEntity.status(persistResult.getStatusCode())
+                .body(persistResult.getBody());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS','ADMIN_DEPARTAMENTO')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id) {
-        ResponseEntity<?> check = checkEventoPermissao(id);
+    public ResponseEntity<Object> deletar(@PathVariable Long id) {
+        ResponseEntity<Object> check = checkEventoPermissao(id);
         if (!(check.getBody() instanceof EventoData data)) {
             return check;
         }
@@ -193,8 +197,8 @@ public class EventoController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS','ADMIN_DEPARTAMENTO')")
     @GetMapping("/{eventoId}/inscritos")
-    public ResponseEntity<?> listarInscritos(@PathVariable Long eventoId) {
-        ResponseEntity<?> check = checkEventoPermissao(eventoId);
+    public ResponseEntity<Object> listarInscritos(@PathVariable Long eventoId) {
+        ResponseEntity<Object> check = checkEventoPermissao(eventoId);
         if (!(check.getBody() instanceof EventoData)) {
             return check;
         }
@@ -203,7 +207,7 @@ public class EventoController {
         return ResponseEntity.ok(lista);
     }
 
-    private ResponseEntity<?> checkEventoPermissao(Long eventoId) {
+    private ResponseEntity<Object> checkEventoPermissao(Long eventoId) {
         Evento evento = eventoService.buscarPorId(eventoId);
         if (evento == null) {
             return ResponseEntity.notFound().build();
@@ -217,7 +221,8 @@ public class EventoController {
         ResponseEntity<?> permissao = EventoUtils.checarPermissaoEvento(usuarioLogado, evento);
 
         if (!permissao.getStatusCode().is2xxSuccessful()) {
-            return permissao;
+            return ResponseEntity.status(permissao.getStatusCode())
+                    .body(permissao.getBody());
         }
 
         return ResponseEntity.ok(new EventoData(usuarioLogado, evento));

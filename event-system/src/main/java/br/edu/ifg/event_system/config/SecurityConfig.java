@@ -33,7 +33,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final String EVENTOS_API_PATH = "/api/eventos/**";
+    private static final String EVENTOS_API_PATH = "/api/eventos";
     private static final String ROLE_ADMIN_GERAL = "ADMIN_GERAL";
     private static final String ROLE_ADMIN_CAMPUS = "ADMIN_CAMPUS";
     private static final String ROLE_ADMIN_DEPARTAMENTO = "ADMIN_DEPARTAMENTO";
@@ -97,7 +97,7 @@ public class SecurityConfig {
                             .permitAll()
                             .requestMatchers("/")
                             .permitAll()
-                            .requestMatchers(HttpMethod.GET, EVENTOS_API_PATH)
+                            .requestMatchers(HttpMethod.GET, EVENTOS_API_PATH + "/**")
                             .permitAll()
                             .requestMatchers("/api/inscricoes/**")
                             .authenticated()
@@ -105,10 +105,12 @@ public class SecurityConfig {
                             .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
                             .requestMatchers(HttpMethod.POST, EVENTOS_API_PATH)
                             .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
-                            .requestMatchers(HttpMethod.PUT, EVENTOS_API_PATH)
+                            .requestMatchers(HttpMethod.PUT, EVENTOS_API_PATH + "/{id}")
                             .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
-                            .requestMatchers(HttpMethod.DELETE, EVENTOS_API_PATH)
+                            .requestMatchers(HttpMethod.DELETE, EVENTOS_API_PATH + "/{id}")
                             .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
+                            .requestMatchers(EVENTOS_API_PATH + "/**")
+                            .authenticated()
                             .requestMatchers("/admin/**")
                             .hasAnyRole(ROLE_ADMIN_GERAL, ROLE_ADMIN_CAMPUS, ROLE_ADMIN_DEPARTAMENTO)
                             .anyRequest()
