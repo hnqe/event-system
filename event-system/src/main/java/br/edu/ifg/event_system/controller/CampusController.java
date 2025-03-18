@@ -56,7 +56,7 @@ public class CampusController {
 
     @PreAuthorize("hasRole('ADMIN_GERAL')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id) {
+    public ResponseEntity<String> deletar(@PathVariable Long id) {
         try {
             campusService.deletar(id);
             return ResponseEntity.noContent().build();
