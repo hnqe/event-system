@@ -46,10 +46,8 @@ public class InscricaoService {
 
     @Transactional
     public Inscricao inscreverUsuarioEmEvento(User user, Evento evento, List<CampoValorDTO> camposValores) {
-        if (evento.getDataLimiteInscricao() != null) {
-            if (LocalDateTime.now().isAfter(evento.getDataLimiteInscricao())) {
-                throw new InscricaoException("As inscrições para este evento já foram encerradas!");
-            }
+        if (evento.getDataLimiteInscricao() != null && LocalDateTime.now().isAfter(evento.getDataLimiteInscricao())) {
+            throw new InscricaoException("As inscrições para este evento já foram encerradas!");
         }
 
         Optional<Inscricao> existente = inscricaoRepository.findByUserIdAndEventoId(user.getId(), evento.getId());

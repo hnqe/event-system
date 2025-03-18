@@ -122,11 +122,9 @@ public class InscricaoController {
 
         boolean isAdminGeral = userLogado.getRoles().stream()
                 .anyMatch(r -> r.getName().equals("ADMIN_GERAL"));
-        if (!isAdminGeral) {
-            if (!insc.getUser().getId().equals(userLogado.getId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Você não pode cancelar a inscrição de outro usuário!");
-            }
+        if (!isAdminGeral && !insc.getUser().getId().equals(userLogado.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Você não pode cancelar a inscrição de outro usuário!");
         }
 
         try {
