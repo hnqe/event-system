@@ -58,8 +58,8 @@ public class UserController {
 
     @PatchMapping("/{userId}/roles")
     @PreAuthorize("hasRole('ADMIN_GERAL')")
-    public ResponseEntity<?> atualizarRoles(@PathVariable Long userId,
-                                            @RequestBody List<String> rolesNovas) {
+    public ResponseEntity<String> atualizarRoles(@PathVariable Long userId,
+                                                 @RequestBody List<String> rolesNovas) {
         User user = userService.buscarPorId(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -70,9 +70,9 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL')")
     @PostMapping("/{userId}/campus/{campusId}")
-    public ResponseEntity<?> adicionarCampusAoUsuario(@PathVariable Long userId,
-                                                      @PathVariable Long campusId) {
-        ResponseEntity<?> validacao = checarUsuarioECampus(userId, campusId);
+    public ResponseEntity<Object> adicionarCampusAoUsuario(@PathVariable Long userId,
+                                                           @PathVariable Long campusId) {
+        ResponseEntity<Object> validacao = checarUsuarioECampus(userId, campusId);
         if (!(validacao.getBody() instanceof UserCampusData data)) {
             return validacao;
         }
@@ -83,9 +83,9 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL')")
     @DeleteMapping("/{userId}/campus/{campusId}")
-    public ResponseEntity<?> removerCampusDoUsuario(@PathVariable Long userId,
-                                                    @PathVariable Long campusId) {
-        ResponseEntity<?> validacao = checarUsuarioECampus(userId, campusId);
+    public ResponseEntity<Object> removerCampusDoUsuario(@PathVariable Long userId,
+                                                         @PathVariable Long campusId) {
+        ResponseEntity<Object> validacao = checarUsuarioECampus(userId, campusId);
         if (!(validacao.getBody() instanceof UserCampusData data)) {
             return validacao;
         }
@@ -96,8 +96,8 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS')")
     @PostMapping("/{userId}/departamentos")
-    public ResponseEntity<?> adicionarDepartamentoAoUsuario(@PathVariable Long userId,
-                                                            @RequestBody AdicionarDepartamentoRequestDTO request) {
+    public ResponseEntity<String> adicionarDepartamentoAoUsuario(@PathVariable Long userId,
+                                                                 @RequestBody AdicionarDepartamentoRequestDTO request) {
         User user = userService.buscarPorId(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -108,7 +108,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Departamento inexistente.");
         }
 
-        ResponseEntity<?> erroPermissao = checarPermissaoAdminCampusDepartamento(departamento);
+        ResponseEntity<String> erroPermissao = checarPermissaoAdminCampusDepartamento(departamento);
         if (erroPermissao != null) {
             return erroPermissao;
         }
@@ -119,8 +119,8 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN_GERAL','ADMIN_CAMPUS')")
     @DeleteMapping("/{userId}/departamentos/{departamentoId}")
-    public ResponseEntity<?> removerDepartamentoDoUsuario(@PathVariable Long userId,
-                                                          @PathVariable Long departamentoId) {
+    public ResponseEntity<String> removerDepartamentoDoUsuario(@PathVariable Long userId,
+                                                               @PathVariable Long departamentoId) {
         User user = userService.buscarPorId(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -131,7 +131,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Departamento inválido.");
         }
 
-        ResponseEntity<?> erroPermissao = checarPermissaoAdminCampusDepartamento(departamento);
+        ResponseEntity<String> erroPermissao = checarPermissaoAdminCampusDepartamento(departamento);
         if (erroPermissao != null) {
             return erroPermissao;
         }
@@ -140,7 +140,7 @@ public class UserController {
         return ResponseEntity.ok("Departamento removido com sucesso!");
     }
 
-    private ResponseEntity<?> checarUsuarioECampus(Long userId, Long campusId) {
+    private ResponseEntity<Object> checarUsuarioECampus(Long userId, Long campusId) {
         User user = userService.buscarPorId(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -153,7 +153,7 @@ public class UserController {
         return ResponseEntity.ok(new UserCampusData(user, campus));
     }
 
-    private ResponseEntity<?> checarPermissaoAdminCampusDepartamento(Departamento departamento) {
+    private ResponseEntity<String> checarPermissaoAdminCampusDepartamento(Departamento departamento) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         User usuarioLogado = userService.buscarPorUsername(auth.getName());
 
