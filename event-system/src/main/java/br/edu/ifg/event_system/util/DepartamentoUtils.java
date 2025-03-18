@@ -11,6 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class DepartamentoUtils {
 
+    private DepartamentoUtils() {
+        throw new UnsupportedOperationException("Esta é uma classe utilitária e não pode ser instanciada.");
+    }
+
     public static class DepartamentoValidationData {
         private Campus campus;
         private User usuarioLogado;

@@ -24,6 +24,10 @@ public class EventoUtils {
     private static final String ROLE_ADMIN_CAMPUS = "ADMIN_CAMPUS";
     private static final String ROLE_ADMIN_DEPARTAMENTO = "ADMIN_DEPARTAMENTO";
 
+    private EventoUtils() {
+        throw new UnsupportedOperationException("Esta é uma classe utilitária e não pode ser instanciada.");
+    }
+
     public static class EventoValidationData {
         private Campus campus;
         private Departamento departamento;
