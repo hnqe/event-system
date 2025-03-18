@@ -328,7 +328,9 @@ public class EventoUtils {
             try {
                 campoValorRepository.deleteByCampoId(id);
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "Erro ao remover valores do campo ID " + id, e);
+                if (logger.isLoggable(Level.SEVERE)) {
+                    logger.log(Level.SEVERE, "Erro ao remover valores do campo ID " + id, e);
+                }
             }
         }
     }
