@@ -9,13 +9,14 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class JwtService {
 
     private static final String SECRET_KEY = "MINHA_CHAVE_SECRETA_GRANDE_O_SUFICIENTE_PARA_256BITS";
 
-    private static final long EXPIRATION_TIME = 2 * 60 * 60 * 1000;
+    private static final long EXPIRATION_TIME = TimeUnit.HOURS.toMillis(2);
 
     public String generateToken(String username, List<String> roles) {
         Date agora = new Date();

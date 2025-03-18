@@ -1,12 +1,10 @@
 package br.edu.ifg.event_system.dto;
 
-import br.edu.ifg.event_system.model.CampoValor;
 import br.edu.ifg.event_system.model.Inscricao;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class InscricaoResponseDTO {
     private Long id;

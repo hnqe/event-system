@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/departamentos")
@@ -106,7 +105,7 @@ public class DepartamentoController {
     @PostMapping
     public ResponseEntity<Object> criar(@RequestBody DepartamentoRequestDTO request) {
         @SuppressWarnings("unchecked")
-        ResponseEntity<Object> validacao = (ResponseEntity<Object>) DepartamentoUtils.validarCampusEPermissao(
+        ResponseEntity<Object> validacao = DepartamentoUtils.validarCampusEPermissao(
                 request, campusService, userService);
         if (!(validacao.getBody() instanceof DepartamentoUtils.DepartamentoValidationData dataOk)) {
             return validacao;
@@ -129,7 +128,7 @@ public class DepartamentoController {
         }
 
         @SuppressWarnings("unchecked")
-        ResponseEntity<Object> validacao = (ResponseEntity<Object>) DepartamentoUtils.validarCampusEPermissao(
+        ResponseEntity<Object> validacao = DepartamentoUtils.validarCampusEPermissao(
                 request, campusService, userService);
         if (!(validacao.getBody() instanceof DepartamentoUtils.DepartamentoValidationData dataOk)) {
             return validacao;
