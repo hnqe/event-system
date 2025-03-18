@@ -21,13 +21,15 @@ jobs:
         cache: maven
     
     - name: Build with Maven
+      working-directory: ./event-system
       run: mvn -B package --file pom.xml
     
     - name: Run tests with coverage
+      working-directory: ./event-system
       run: mvn test
     
     - name: Upload coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2 
       with:
         name: jacoco-report
-        path: target/site/jacoco/
+        path: event-system/target/site/jacoco/
