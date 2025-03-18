@@ -51,7 +51,11 @@ public class SecurityConfig {
         return username -> {
             var user = userRepository.findByUsername(username);
             if (user == null) {
-                throw new UsernameNotFoundException("Usuário não encontrado");
+                return new org.springframework.security.core.userdetails.User(
+                        "dummy_user",
+                        "{noop}invalid_password",
+                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                );
             }
 
             var authorities = user.getRoles().stream()
