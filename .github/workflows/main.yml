@@ -1,29 +1,12 @@
 name: Java CI with Maven (Testes Unitários e Integração)
-
 on:
   push:
     branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master, develop ]
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: event_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     
     steps:
     - name: Checkout do repositório
@@ -36,42 +19,43 @@ jobs:
         distribution: 'temurin'
         cache: maven
     
-    - name: Criar schema no banco de dados
+    - name: Setup Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Verificar Docker
       run: |
-        sudo apt-get install -y postgresql-client
-        PGPASSWORD=postgres psql -h localhost -U postgres -d event_db -c "CREATE SCHEMA IF NOT EXISTS event_system;"
+        docker --version
+        docker ps
+        docker info
     
-    - name: Configurar variáveis de ambiente para testes
+    - name: Configurar TestContainers
       run: |
-        echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/event_db" >> $GITHUB_ENV
-        echo "SPRING_DATASOURCE_USERNAME=postgres" >> $GITHUB_ENV
-        echo "SPRING_DATASOURCE_PASSWORD=postgres" >> $GITHUB_ENV
+        echo "TESTCONTAINERS_RYUK_DISABLED=true" >> $GITHUB_ENV
+        echo "TESTCONTAINERS_CHECKS_DISABLE=true" >> $GITHUB_ENV
+        # Esta opção melhora a eficiência dos testes que usam TestContainers
+        echo "TESTCONTAINERS_REUSE_ENABLE=true" >> $GITHUB_ENV
     
     - name: Compilar projeto
       working-directory: ./event-system
       run: mvn -B clean compile
       
-    - name: Executar testes unitários
+    - name: Executar todos os testes
       working-directory: ./event-system
-      run: mvn test
-      
-    - name: Gerar relatório de cobertura para testes unitários
+      run: mvn verify
+
+    - name: Gerar relatório de cobertura
       working-directory: ./event-system
       run: mvn jacoco:report
-        
-    - name: Executar testes de integração
-      working-directory: ./event-system
-      run: mvn failsafe:integration-test failsafe:verify
     
-    - name: Upload do relatório de cobertura de testes unitários
+    - name: Upload do relatório de cobertura
       uses: actions/upload-artifact@v4
       with:
-        name: jacoco-unit-test-report
+        name: jacoco-report
         path: |
           event-system/target/site/jacoco/
           event-system/target/jacoco.exec
     
-    - name: Verificar e empacotar
+    - name: Empacotar
       if: success()
       working-directory: ./event-system
       run: mvn -B package -DskipTests
