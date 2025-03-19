@@ -38,6 +38,7 @@ class RepositoryIntegrationTest extends BaseIntegrationTest {
     private Evento evento;
 
     @BeforeEach
+    @Override
     void setUp() {
         inscricaoRepository.deleteAll();
         eventoRepository.deleteAll();

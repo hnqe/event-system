@@ -59,6 +59,7 @@ class EventoControllerIntegrationTest extends BaseIntegrationTest {
     private String adminToken;
 
     @BeforeEach
+    @Override
     void setUp() {
         userRepository.deleteAll();
         roleRepository.deleteAll();

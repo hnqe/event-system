@@ -39,6 +39,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
+    @Override
     void setUp() {
         userRepository.deleteAll();
         roleRepository.deleteAll();

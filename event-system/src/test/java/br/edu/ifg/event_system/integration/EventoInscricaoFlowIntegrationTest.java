@@ -65,6 +65,7 @@ class EventoInscricaoFlowIntegrationTest extends BaseIntegrationTest {
     private String userToken;
 
     @BeforeEach
+    @Override
     void setUp() {
         inscricaoRepository.deleteAll();
         eventoRepository.deleteAll();
