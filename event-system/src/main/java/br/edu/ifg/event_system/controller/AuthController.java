@@ -69,8 +69,12 @@ public class AuthController {
     @GetMapping("/current-user")
     public ResponseEntity<User> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.buscarPorUsername(auth.getName());
 
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = userService.buscarPorUsername(auth.getName());
         if (user == null) {
             return ResponseEntity.notFound().build();
         }

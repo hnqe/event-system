@@ -97,7 +97,6 @@ class AuthControllerTest {
 
     @Test
     void login_WithInvalidCredentials_ShouldReturnUnauthorized() {
-        // Arrange
         LoginRequestDTO loginRequest = new LoginRequestDTO();
         loginRequest.setUsername("test@ifg.edu.br");
         loginRequest.setPassword("wrongpassword");
@@ -163,6 +162,8 @@ class AuthControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("test@ifg.edu.br");
         when(userService.buscarPorUsername("test@ifg.edu.br")).thenReturn(testUser);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn("test@ifg.edu.br");
 
         ResponseEntity<User> response = authController.getCurrentUser();
 
@@ -172,6 +173,8 @@ class AuthControllerTest {
 
         verify(securityContext).getAuthentication();
         verify(authentication).getName();
+        verify(authentication).isAuthenticated();
+        verify(authentication).getPrincipal();
         verify(userService).buscarPorUsername("test@ifg.edu.br");
     }
 
@@ -180,6 +183,8 @@ class AuthControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("nonexistent@ifg.edu.br");
         when(userService.buscarPorUsername("nonexistent@ifg.edu.br")).thenReturn(null);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn("nonexistent@ifg.edu.br"); // Qualquer valor que não seja "anonymousUser"
 
         ResponseEntity<User> response = authController.getCurrentUser();
 
@@ -188,7 +193,43 @@ class AuthControllerTest {
 
         verify(securityContext).getAuthentication();
         verify(authentication).getName();
+        verify(authentication).isAuthenticated();
+        verify(authentication).getPrincipal();
         verify(userService).buscarPorUsername("nonexistent@ifg.edu.br");
+    }
+
+    @Test
+    void getCurrentUser_WhenNotAuthenticated_ShouldReturnUnauthorized() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.isAuthenticated()).thenReturn(false);
+
+        ResponseEntity<User> response = authController.getCurrentUser();
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNull(response.getBody());
+
+        verify(securityContext).getAuthentication();
+        verify(authentication).isAuthenticated();
+        verify(authentication, never()).getName();
+        verify(userService, never()).buscarPorUsername(anyString());
+    }
+
+    @Test
+    void getCurrentUser_WhenAnonymousUser_ShouldReturnUnauthorized() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn("anonymousUser");
+
+        ResponseEntity<User> response = authController.getCurrentUser();
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNull(response.getBody());
+
+        verify(securityContext).getAuthentication();
+        verify(authentication).isAuthenticated();
+        verify(authentication).getPrincipal();
+        verify(authentication, never()).getName();
+        verify(userService, never()).buscarPorUsername(anyString());
     }
 
 }

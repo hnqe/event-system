@@ -1,5 +1,6 @@
 package br.edu.ifg.event_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String username;
+
+    @JsonIgnore
     private String password;
 
     private String nomeCompleto;
