@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Maven (Testes Unitários e Integração)
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
     branches: [ main, master, develop ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-
+    
     services:
       postgres:
         image: postgres:15
@@ -24,7 +24,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    
     steps:
     - name: Checkout do repositório
       uses: actions/checkout@v3
@@ -35,31 +35,50 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-
+    
     - name: Criar schema no banco de dados
       run: |
         sudo apt-get install -y postgresql-client
         PGPASSWORD=postgres psql -h localhost -U postgres -d event_db -c "CREATE SCHEMA IF NOT EXISTS event_system;"
-
+    
     - name: Configurar variáveis de ambiente para testes
       run: |
         echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/event_db" >> $GITHUB_ENV
         echo "SPRING_DATASOURCE_USERNAME=postgres" >> $GITHUB_ENV
         echo "SPRING_DATASOURCE_PASSWORD=postgres" >> $GITHUB_ENV
-
-    - name: Build com Maven
+    
+    - name: Compilar projeto
       working-directory: ./event-system
-      run: mvn -B package --file pom.xml
-
-    - name: Executar testes com cobertura
+      run: mvn -B clean compile
+      
+    - name: Executar testes unitários
       working-directory: ./event-system
-      run: mvn test jacoco:report
-
-    - name: Upload do relatório de cobertura
+      run: mvn test
+      
+    - name: Gerar relatório de cobertura para testes unitários
+      working-directory: ./event-system
+      run: mvn jacoco:report
+        
+    - name: Executar testes de integração
+      working-directory: ./event-system
+      run: mvn failsafe:integration-test failsafe:verify
+    
+    - name: Upload do relatório de cobertura de testes unitários
       uses: actions/upload-artifact@v4
       with:
-        name: jacoco-report
+        name: jacoco-unit-test-report
         path: |
           event-system/target/site/jacoco/
           event-system/target/jacoco.exec
-          event-system/target/jacoco-report.xml
+    
+    - name: Verificar e empacotar
+      if: success()
+      working-directory: ./event-system
+      run: mvn -B package -DskipTests
+      
+    - name: Upload do artefato JAR
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: event-system-jar
+        path: event-system/target/event-system-*.jar
